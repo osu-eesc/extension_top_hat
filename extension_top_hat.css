@@ -15,8 +15,12 @@
   background: linear-gradient(top,  rgba(86,86,86,1) 0%,rgba(37,37,37,1) 100%); /* W3C */
 }
 
-.ie #block-extension-top-hat-extension-top-hat .content  {
+.ie #osu-top-hat  {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#565656', endColorstr='#252525',GradientType=0 ); /* IE6-8 */
+}
+
+#block-extension-top-hat-extension-top-hat .content {
+	margin:0;
 }
 
 #block-extension-top-hat-extension-top-hat .content  a {
@@ -42,9 +46,9 @@
   padding: 0;
 }
 
-@media (max-width: 767px) {
-	#block-extension-top-hat-extension-top-hat .content  a.tag {
-		width:101px;
+@media (min-width: 767px) {
+	#block-extension-top-hat-extension-top-hat {
+		width:140px;
 	}
 }
 
