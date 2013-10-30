@@ -1,0 +1,6 @@
+name = Extension Top Hat
+description = Theme options for the Extension Top Hat
+package = Other
+core = 7.x
+version = 7.x-1.0
+stylesheets[all][] = extension_top_hat.css

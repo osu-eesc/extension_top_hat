@@ -1,0 +1,21 @@
+<?php
+/**
+ * @file extension_top_hat_install
+ *
+ * Install default settings for the extension_top_hat
+ *
+ */
+function extension_top_hat_install(){
+  $settings = array(
+      'hide_utility' => 0,
+      'show_search'  => 1,
+      'vso_option'   => 0,
+      );
+
+  variable_set('extension_top_hat_settings', $settings);
+}
+
+function extension_top_hat_uninstall() {
+  variable_del('extension_top_hat_settings');
+}
+
