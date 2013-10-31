@@ -7,6 +7,13 @@
  */
 
 /**
+ * @file
+ * Code for the Extension Top Hat feature.
+ */
+
+include_once 'extension_top_hat.features.inc';
+
+/**
  * Implements hook_permssion()
  *
  * Permissions to configure top hat
@@ -179,6 +186,7 @@ function extension_top_hat_block_info() {
  $blocks = array();
  $blocks['extension_top_hat'] = array(
    'info' => t('Extension Top Hat'),
+	 'region' => 'top',
  );
  return $blocks;
 }
