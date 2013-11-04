@@ -1,12 +1,12 @@
 name = Extension Top Hat
 description = Adds OSU's Top Hat to the extension top hat region
-package = Other
 core = 7.x
+package = Other
 version = 7.x-1.0
 project = extension_top_hat
 dependencies[] = context
 dependencies[] = ctools
+stylesheets[all][] = extension_top_hat.css
 features[context][] = extension_top_hat
 features[ctools][] = context:context:3
 features[features_api][] = api:2
-stylesheets[all][] = extension_top_hat.css

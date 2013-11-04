@@ -32,6 +32,12 @@ function extension_top_hat_context_default_contexts() {
           'region' => 'top',
           'weight' => '-10',
         ),
+        'extension_top_hat-extension_top_hat_links' => array(
+          'module' => 'extension_top_hat',
+          'delta' => 'extension_top_hat_links',
+          'region' => 'top',
+          'weight' => '-9',
+        ),
       ),
     ),
   );
