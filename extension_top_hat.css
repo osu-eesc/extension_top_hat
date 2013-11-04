@@ -135,3 +135,23 @@ span.students-orange {
   margin-left: 0;
 }
 
+/* Top Hat Links */
+#block-extension-top-hat-extension-top-hat-links {
+	height:100%;
+	margin-left:0px;
+}
+
+#block-extension-top-hat-extension-top-hat-links .content{
+	margin-top: 20px;
+}
+
+#block-extension-top-hat-extension-top-hat-links a {
+	color: #d3d2d2;
+	border-left: 1px solid #d3d2d2;
+	padding: 0 5px;
+}
+
+#block-extension-top-hat-extension-top-hat-links a.first {
+	border:none;
+	padding-left:0;
+}

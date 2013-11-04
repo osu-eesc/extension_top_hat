@@ -10,6 +10,7 @@ function extension_top_hat_install(){
       'hide_utility' => 1,
       'show_search'  => 0,
       'vso_option'   => 0,
+			'num_links'    => 1,
       );
 
   variable_set('extension_top_hat_settings', $settings);
@@ -22,4 +23,5 @@ function extension_top_hat_uninstall() {
 function extension_top_hat_block_info_alter(&$blocks, $theme, $code_blocks) {
   // Disable the login block.
 	$blocks['extension_top_hat']['extension_top_hat']['css_class'] = 'span2';
+	$blocks['extension_top_hat']['extension_top_hat_links']['css_class'] = 'span2';
 }

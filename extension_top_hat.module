@@ -55,15 +55,13 @@ function extension_top_hat_menu() {
  * Top hat settings form
  */
 function extension_top_hat_settings($form, &$form_state) {
-
   // Get saved settings
   $settings = variable_get('extension_top_hat_settings', array());
-
   // Option - Hide utiltity links
   $form['extension_top_hat_options']['hide_utility'] = array(
       '#type'          => 'checkbox',
       '#title'         => 'Hide utitlity links in Top Hat.',
-      '#default_value' => isset($settings['hide_utility']) ? $settings['hide_utility'] : 0,
+      '#default_value' => isset($settings['hide_utility']) ? $settings['hide_utility'] : 1,
       '#description'   => t('Hide the "Calendar, Library, Maps..." links in the Top Hat'),
       );
 
@@ -71,7 +69,7 @@ function extension_top_hat_settings($form, &$form_state) {
   $form['extension_top_hat_options']['show_search'] = array(
       '#type'          => 'checkbox',
       '#title'         => 'Show the search form in Top Hat.',
-      '#default_value' => isset($settings['show_search']) ? $settings['show_search'] : 1,
+      '#default_value' => isset($settings['show_search']) ? $settings['show_search'] : 0,
       '#description'   => t('Show the search form in the Top Hat:. Requires the OSU Search module.'),
       );
 
@@ -83,12 +81,104 @@ function extension_top_hat_settings($form, &$form_state) {
       '#description'   => t('Set the branding for voluntary organizations. This replaces the tag image with the words Oregon State University.'),
       );
 
-    $form['extension_top_hat_options']['submit'] = array(
-      '#type'           => 'submit',
-      '#value'          => 'Save Settings',
-    );
+			// Because we have many fields with the same values, we have to set
+		  // #tree to be able to access them.
+		  $form['#tree'] = TRUE;
+		  $form['links_fieldset'] = array(
+		    '#type' => 'fieldset',
+		    '#title' => t('Top Hat Links'),
+		    // Set up the wrapper so that AJAX will be able to replace the fieldset.
+		    '#prefix' => '<div id="links-fieldset-wrapper">',
+		    '#suffix' => '</div>',
+		  );
+
+		  // Build the fieldset with the proper number of links. We'll use
+		  // $form_state['num_links'] to determine the number of textfields to build.
+		  if (empty($form_state['num_links'])) {
+		    $form_state['num_links'] = $settings['num_links'];
+		  } 
+		  for ($i = 0; $i < $form_state['num_links']; $i++) {
+				$form['links_fieldset']['link_fieldset'][$i] = array(
+			    '#type' => 'fieldset',
+			    '#title' => 'Link ' . ($i+1),
+			    // Set up the wrapper so that AJAX will be able to replace the fieldset.
+			    '#prefix' => '<div class="link-fieldset-wrapper">',
+			    '#suffix' => '</div>',
+			  );
+			
+		    $form['links_fieldset']['link_fieldset'][$i]['title'] = array(
+		      '#type' 				 => 'textfield',
+					'#default_value' => isset($settings['links']['link_fieldset'][$i]['title']) ? $settings['links']['link_fieldset'][$i]['title'] : '',
+		      '#title' 				 => t('Title'),
+		    );
+		
+				$form['links_fieldset']['link_fieldset'][$i]['url'] = array(
+		      '#type' 				 => 'textfield',
+					'#default_value' => isset($settings['links']['link_fieldset'][$i]['url']) ? $settings['links']['link_fieldset'][$i]['url'] : '',
+		      '#title' 				 => t('URL'),
+		    );
+	
+		  }
+		  $form['links_fieldset']['add_link'] = array(
+		    '#type' => 'submit',
+		    '#value' => t('Add'),
+		    '#submit' => array('extension_top_hat_add_one'),
+		    // See the examples in ajax_example.module for more details on the
+		    // properties of #ajax.
+		    '#ajax' => array(
+		      'callback' => 'extension_top_hat_callback',
+		      'wrapper' => 'links-fieldset-wrapper',
+		    ),
+		  );
+		  if ($form_state['num_links'] > 1) {
+		    $form['links_fieldset']['remove_link'] = array(
+		      '#type' => 'submit',
+		      '#value' => t('Remove'),
+		      '#submit' => array('extension_top_hat_remove_one'),
+		      '#ajax' => array(
+		        'callback' => 'extension_top_hat_callback',
+		        'wrapper' => 'links-fieldset-wrapper',
+		      ),
+		    );
+		  }
+		  $form['submit'] = array(
+		    '#type' => 'submit',
+		    '#value' => t('Save Settings'),
+		  );
+
 
   return $form;
+}
+
+/**
+ * Callback for both ajax-enabled buttons.
+ *
+ * Selects and returns the fieldset with the names in it.
+ */
+function extension_top_hat_callback($form, $form_state) {
+  return $form['links_fieldset'];
+}
+
+/**
+ * Submit handler for the "add-one-more" button.
+ *
+ * Increments the max counter and causes a rebuild.
+ */
+function extension_top_hat_add_one($form, &$form_state) {
+  $form_state['num_links']++;
+  $form_state['rebuild'] = TRUE;
+}
+
+/**
+ * Submit handler for the "remove one" button.
+ *
+ * Decrements the max counter and causes a form rebuild.
+ */
+function extension_top_hat_remove_one($form, &$form_state) {
+  if ($form_state['num_links'] > 1) {
+    $form_state['num_links']--;
+  }
+  $form_state['rebuild'] = TRUE;
 }
 
 /**
@@ -96,12 +186,14 @@ function extension_top_hat_settings($form, &$form_state) {
  *
  */
 function extension_top_hat_settings_submit($form, &$form_state){
-
+	//dpm($form_state);
   // Create an array of our settings
   $settings = array(
-    'hide_utility' => $form_state['values']['hide_utility'],
-    'show_search'  => $form_state['values']['show_search'],
-    'vso_option'   => $form_state['values']['vso_option'],
+    'hide_utility' => $form_state['values']['extension_top_hat_options']['hide_utility'],
+    'show_search'  => $form_state['values']['extension_top_hat_options']['show_search'],
+    'vso_option'   => $form_state['values']['extension_top_hat_options']['vso_option'],
+		'links'				 => $form_state['values']['links_fieldset'],
+		'num_links'		 => $form_state['num_links'],
   );
 
   // Write it to variables
@@ -188,6 +280,10 @@ function extension_top_hat_block_info() {
    'info' => t('Extension Top Hat'),
 	 'region' => 'top',
  );
+ $blocks['extension_top_hat_links'] = array(
+   'info' => t('Extension Top Hat Links'),
+	 'region' => 'top',
+ );
  return $blocks;
 }
 
@@ -202,6 +298,9 @@ function extension_top_hat_block_view($delta = '') {
     case 'extension_top_hat':
       $block['content'] = extension_top_hat_content();
       break;
+		case 'extension_top_hat_links':
+	    $block['content'] = extension_top_hat_links_content();
+	    break;
   }
   return $block;
 }
@@ -251,4 +350,15 @@ function extension_top_hat_content() {
   $top_hat .= "";
 
   return $top_hat;
+}
+
+function extension_top_hat_links_content() {
+	$settings = variable_get('extension_top_hat_settings', array());
+	$fieldset = $settings['links']['link_fieldset'];
+	foreach($fieldset as $link_num => $link) {
+		if ($link_num == 0) $class = 'class="first"';
+		$content .= '<a '.$class.' href="'.$link['url'].'">'.$link['title'].'</a>';
+		$class = '';
+	}
+	return $content;
 }
